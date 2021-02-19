@@ -82,7 +82,7 @@ output "access_key_pgp_key_fingerprint" {
 output "access_key_ses_smtp_password" {
   description = "The secret access key converted into an SES SMTP password by applying AWS's documented conversion algorithm."
   value = element(
-    concat(aws_iam_access_key.access_key.*.ses_smtp_password, [""]),
+    concat(aws_iam_access_key.access_key.*.ses_smtp_password_v4, [""]),
     0,
   )
 }
