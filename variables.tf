@@ -1,10 +1,10 @@
 variable "name" {
-  description = "(Required) The user's name. The name must consist of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: =,.@-_.. User names are not distinguished by case. For example, you cannot create users named both 'TESTUSER' and 'testuser'."
+  description = "(Required) The user's name. The name must consist of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: =,.@-_.. User names are not distinguished by case. For example, you cannot create users named both \"TESTUSER\" and \"testuser\"."
   type        = string
 }
 
 variable "path" {
-  description = "(Optional) Path in which to create the user."
+  description = "(Optional, default \"/\") Path in which to create the user."
   type        = string
   default     = null
 }
@@ -17,12 +17,12 @@ variable "permissions_boundary" {
 
 variable "force_destroy" {
   description = "(Optional, default false) When destroying this user, destroy even if it has non-Terraform-managed IAM access keys, login profile or MFA devices. Without force_destroy a user with non-Terraform-managed access keys and login profile will fail to be destroyed."
-  type        = bool
-  default     = false
+  type        = string
+  default     = null
 }
 
 variable "tags" {
-  description = "(Optional) Key-value mapping of tags for the IAM user"
+  description = "Key-value map of tags for the IAM user. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level."
   type        = map(string)
   default     = {}
 }
@@ -37,7 +37,7 @@ variable "policies_count" {
 variable "policies" {
   description = "The ARNs of policies to directly attach to the user"
   type        = list(string)
-  default     = [""]
+  default     = []
 }
 
 variable "json_policies_count" {
@@ -49,7 +49,7 @@ variable "json_policies_count" {
 variable "json_policies" {
   description = "list of JSON formatted policies to directly attach to the user"
   type        = list(string)
-  default     = [""]
+  default     = []
 }
 
 ## Access keys
@@ -78,23 +78,24 @@ variable "create_login_profile" {
   default     = false
 }
 
-variable "login_profile_password_reset_required" {
-  description = "(Required) Whether the user should be forced to reset the generated password on first login."
-  type        = bool
-  default     = null
-}
-
 variable "login_profile_pgp_key" {
-  description = "(Required) Either a base-64 encoded PGP public key, or a keybase username in the form keybase:username."
+  description = "(Required) Either a base-64 encoded PGP public key, or a keybase username in the form keybase:username. Only applies on resource creation. Drift detection is not possible with this argument."
   type        = string
   default     = null
 }
 
 variable "login_profile_password_length" {
-  description = "(Optional) The length of the generated password."
+  description = "(Optional, default 20) The length of the generated password on resource creation. Only applies on resource creation. Drift detection is not possible with this argument."
   type        = number
   default     = null
 }
+
+variable "login_profile_password_reset_required" {
+  description = "(Optional, default \"true\") Whether the user should be forced to reset the generated password on resource creation. Only applies on resource creation. Drift detection is not possible with this argument."
+  type        = bool
+  default     = null
+}
+
 
 ## SSH Key Upload
 variable "upload_ssh_key" {
@@ -103,28 +104,20 @@ variable "upload_ssh_key" {
   default     = false
 }
 
+variable "ssh_key_encoding" {
+  description = "(Required) Specifies the public key encoding format to use in the response. To retrieve the public key in ssh-rsa format, use SSH. To retrieve the public key in PEM format, use PEM."
+  type        = string
+  default     = null
+}
+
 variable "ssh_key_public_key" {
   description = "(Required) The SSH public key. The public key must be encoded in ssh-rsa format or PEM format."
   type        = string
   default     = null
 }
 
-variable "ssh_key_encoding" {
-  description = "(Optional) Specifies the public key encoding format to use in the response. To retrieve the public key in ssh-rsa format, use SSH. To retrieve the public key in PEM format, use PEM."
-  type        = string
-  default     = null
-}
-
 variable "ssh_key_status" {
-  description = "(Optional) The status to assign to the SSH public key. Active means the key can be used for authentication with an AWS CodeCommit repository. Inactive means the key cannot be used."
+  description = "(Optional) The status to assign to the SSH public key. Active means the key can be used for authentication with an AWS CodeCommit repository. Inactive means the key cannot be used. Default is active."
   type        = string
   default     = null
 }
-
-# Avoid resources creation
-variable "enabled" {
-  description = "(Optional) Whether resources have to be deployed"
-  type        = bool
-  default     = true
-}
-
