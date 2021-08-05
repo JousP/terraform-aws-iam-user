@@ -20,7 +20,7 @@ data "aws_iam_policy_document" "policy_alice" {
 
 module "user_alice" {
   source                                = "JousP/iam-user/aws"
-  version                               = "~> 3.0"
+  version                               = "~> 3.1"
   name                                  = "alice"
   path                                  = "/users/tech/"
   force_destroy                         = true
